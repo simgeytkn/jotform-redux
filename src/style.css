@@ -1,0 +1,79 @@
+body{
+    overflow: hidden;
+}
+
+img{
+    height: 100px;
+    display: block;
+    margin: auto;
+}
+
+.search .ui.input{
+    width: 100%;
+    color: #b35317;
+}
+.search .ui.input>input{
+    color: #b35317;
+    font-weight: bold;
+}
+.search .enterButton{
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
+    color: white;
+    background: #ff8d00;
+}
+
+.search ul{
+    padding: 0;
+    padding-right: 1em;
+    overflow-y: auto;
+    height: 750px;
+}
+
+.search li{
+    padding: 1.75em 0;
+    list-style: none;
+    font-size: 20px;
+    color: white;
+    font-weight: bold;
+    border-bottom: 1px solid black
+}
+
+.search .buttons{
+    float: right;
+}
+
+.search .buttons button{
+    color: #ff8d00;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+.search .buttons .ml-15{
+    margin-left: 15px;
+}
+
+.ui.text.vertical.leftMenu.menu{
+    width: 100%;
+    margin-top: 5em;
+}
+
+.leftMenu .links{
+    text-align: center;
+    color: #f5c846;
+    font-size: 25px;
+    display: block;
+}
+
+.leftMenu .links span{
+    margin-right: 15px;
+}
+
+.context{
+    background: #636363;
+}
+
+.podo{
+    height: 200px;
+}
