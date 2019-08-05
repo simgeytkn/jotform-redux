@@ -8,6 +8,10 @@ img{
     margin: auto;
 }
 
+.search {
+    margin-top: 1em;
+}
+
 .search .ui.input{
     width: 100%;
     color: #b35317;
@@ -76,4 +80,89 @@ img{
 
 .podo{
     height: 200px;
+}
+
+.ui.table tr td{
+    border-top: none;
+}
+.ui.celled.table tr td, .ui.celled.table tr th{
+    border-left: none
+}
+
+.ui.table{
+    background: #e6e5e561;
+    font-size: 17px;
+}
+.ui.table thead th{
+    background: none !important;
+    color: #f07b0b;
+}
+
+.mr40{
+    margin-right: 40px!important;
+}
+.ui.header.tableColor{
+    padding: 25px 5px;
+    margin: 0;
+    font-size: 27px;
+    color: #fb7c08;
+    background: #e6e5e561;
+}
+
+Table i.icon{
+    color: #f07b0b
+}
+
+.ui.table tr td {
+    color: #18265B;
+}
+
+.noSubmission{
+    text-align: center;
+    margin: 4em !important;
+}
+
+.noSubmission i.inbox.icon{
+    font-size: 4em;
+    color: orange;
+}
+textarea{
+    height: 195px;
+    width: 360px;
+}
+
+.ui.header.orderModal{
+    padding: 25px 5px;
+    margin: 0;
+    font-size: 27px;
+}
+
+.center.aligned.column.contentEdit{
+    padding: 45px;
+}
+
+.center.aligned.column.contentEdit p{
+    margin: 0.25em; 
+}
+
+.editTexts{
+    margin: 1.75em;
+}
+
+.p15{
+    padding: 15px;
+}
+
+.ui.modal.transition.visible.active.modalEdit{
+    border-radius: 35px;
+    background: #dcdcdc;
+}
+
+.ui.header.editHeader{
+    color: #ef9428;
+    font-size: 26px;
+}
+
+.ui.checkbox{
+    font-size: 22px;
 }

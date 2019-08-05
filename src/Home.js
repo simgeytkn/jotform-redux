@@ -1,50 +1,39 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { getForm,orderComplete, orderDetails, changeTitle } from './action/index';
+import ViewOrder from './ViewOrder'
+import { getForm,orderComplete, changeTitle, swap, offset, submission } from './action/index';
 import './style.css';
 import { debounce } from './throttle';
 import { Link } from 'react-router-dom';
-import { Grid, Icon, Menu, Input, Image } from 'semantic-ui-react';
+import { Grid, Icon, Menu, Input, Image,Button, Modal } from 'semantic-ui-react';
+import Script from "react-load-script";
 
 class Home extends Component {
     constructor(props){
         super(props);
-        this.error = false
-        this.test = this.test.bind(this)
+        this.getForms = this.getForms.bind(this)
         this.state={
-            offset: 0,
             apiKey: '',
-            head: ''
+            open: false,
+            counter: 0
         }
         this.convertOrder = this.convertOrder.bind(this)
-
-        window.addEventListener('scroll', debounce(this.callback, 100));
     }
-    
+
+    handleConfirm = () => this.setState({ open: false })
+    handleCancel = () => this.setState({ open: false })
+
     componentWillUnmount() {
         window.removeEventListener('scroll', this.debounce)
     }
-    
-    callback = () => {
-    /*    if((window.innerHeight + window.pageYOffset) >= document.body.scrollHeight-1000
-         && !(window.pageYOffset < document.body.scrollHeight-1000)){
-            if(this.props.form.length > this.state.offset){
-                this.setState({
-                    offset: this.state.offset + 5
-                },this.test)
-            }
-        }*/
-    }
- 
-    convertOrder = () => (e) => {
-        var formTitle = e.title
-        console.log("Form Title: ", e.title)
-        if(e.title.includes('Order') === false){
+
+    convertOrder = (el)  => {
+        var formTitle = el.title
+        if(el.title.includes('Order') === false){
             var title = {
                 text: formTitle + "(Order)"
             }            
         }else{
-            alert("It is ordered")
             var title = {
                 text: formTitle
             }
@@ -53,9 +42,14 @@ class Home extends Component {
         this.setState({
             head: formTitle
         })
-        this.props.orderComplete(this.state.apiKey,e.id)
-        this.props.orderDetails(this.state.apiKey,e.id)
-        this.props.changeTitle(this.state.apiKey,e.id,title.text)  
+        
+        this.props.orderComplete(this.state.apiKey,el.id)
+        this.props.changeTitle(this.state.apiKey,el.id,title.text) 
+        this.props.swap(el.id,title.text)
+    }
+
+    viewOrder = (el) => {
+        this.props.submission(el.id,this.state.apiKey)
     }
 
     inputKey = (e) => {
@@ -65,92 +59,108 @@ class Home extends Component {
         })
         
     }
-    test = () => {
-        this.props.getForm(this.state.apiKey,this.state.offset)
+
+    getForms = () => {
+        this.props.getForm(this.state.apiKey,this.props.offset)
     }
 
     scroll = (e) => {
         var element = e.target
-        console.log(e.target.scrollTop)
         if(element.scrollHeight - element.scrollTop === element.clientHeight){
-           if(this.props.form.length > this.state.offset ){
-               this.setState({
-                   offset: this.state.offset + 10
-               },this.test)
-           }}
-    }
-    render(){
-        if(!this.error){
-            return(
-                <div className="search">
-                    <Grid centered>
-                        <Grid.Column width={4}>
-                            <Input icon={{ name: 'search', circular: true, link: true }} placeholder='Enter API Key' id="apiKey" onBlur={this.inputKey} defaultValue="c9200350c71441cc7e2ad48f7f0f7d21"/>
-                        </Grid.Column>
-                        <Grid.Column width={2}>
-                        <Link to='/'> 
-                                <button className="enterButton" onClick={this.test}>
-                                    Enter
-                                </button>
-                            </Link> 
-                        </Grid.Column>
-                    </Grid>
-
-                    {this.props.form.length ?
-                    <Grid className="context">
-                          <Grid.Column id="borderRight" width={4} >
-                            <Image className="podo" src="https://cdn.jotfor.ms/assets/img/memberkit/user_guide_images/f1.png?v=0.2" circular/>
-                            <Menu text vertical className="leftMenu">
-                                <Menu.Item>
-                                    <Link to="order" onClick={this.test} className="links">
-                                        <span>ORDERED</span>
-                                        <Icon name='angle right' />
-                                    </Link>
-                                </Menu.Item>
-                                <Menu.Item>
-                                    <Link to="normal" onClick={this.test} className="links">
-                                        <span>NORMAL</span>
-                                        <Icon name='angle right' />
-                                    </Link>
-                                </Menu.Item>
-                            </Menu>
-                        </Grid.Column>
-                        <Grid.Column width={10}> 
-                            <ul onScroll={this.scroll}>   
-                                {this.props.form.map((el,index) => 
-                                    <li key={index} id={el.id}>
-                                        {el.title}
-                                        {console.log(el.title)}
-                                        <div className="buttons">
-                                            {el.title.indexOf('Order') === -1 ? <button title={el.title} id={el.id} onClick={() => this.convertOrder(el)}>Convert To Order Form</button>
-                                            : <button title={el.title} id={el.id}>View Order</button>
-                                            }
-                                        </div>
-                                    </li>
-                                )} 
-                            </ul>
-                        </Grid.Column>
-                    </Grid> : null }
-                </div>
-            )
+            this.getForms()
         }
+        
+    }
+
+    render(){
+        return( 
+            <div className="search">
+                <Script url="https://js.jotform.com/JotForm.js" />
+                {this.props.form.length ? null  : 
+                <Grid centered>
+                    <Grid.Column width={4}>
+                        <Input icon={{ name: 'search', circular: true, link: true }} placeholder='Enter API Key' id="apiKey" onBlur={this.inputKey} defaultValue="2408efdd6d5f8512c44907b94c5626a6"/>
+                    </Grid.Column>
+                    <Grid.Column width={2}>
+                    <Link to='/'> 
+                            <button className="enterButton" onClick={this.getForms}>
+                                Enter
+                            </button>
+                        </Link> 
+                    </Grid.Column>
+                </Grid>}
+                {this.props.form.length ?
+                <Grid className="context">
+                    <Grid.Column id="borderRight" width={4} >
+                        <Image className="podo" src="https://cdn.jotfor.ms/assets/img/memberkit/user_guide_images/f1.png?v=0.2" circular/>
+                        <Menu text vertical className="leftMenu">
+                            <Menu.Item>
+                                <Link to="order" onClick={this.getForms} className="links">
+                                    <span>ORDERED</span>
+                                    <Icon name='chevron right' />
+                                </Link>
+                            </Menu.Item>
+                            <Menu.Item>
+                                <Link to="normal" onClick={this.getForms} className="links">
+                                    <span>NORMAL</span>
+                                    <Icon name='chevron right' />
+                                </Link>
+                            </Menu.Item>
+                            <Menu.Item>
+                                <Link to="/" onClick={this.getForms} className="links">
+                                    <span>ALL</span>
+                                    <Icon name='chevron right' />
+                                </Link>
+                            </Menu.Item>
+                        </Menu>
+                    </Grid.Column>
+                    <Grid.Column width={10}> 
+                        <ul onScroll={this.scroll}>   
+                            {this.props.form.map((el,index) => 
+                                <li key={index} id={el.id}>
+                                    {el.title}
+                                    <div className="buttons">
+                                        {el.title.indexOf('Order') === -1 ? 
+                                            <Button title={el.title} id={el.id} onClick={() => this.convertOrder(el)}>
+                                                Convert To Order Form  
+                                            </Button>
+                                            : <div>
+                                            <Modal trigger={<Button className='mr40' onClick={() => this.viewOrder(el)}>View Order</Button>} size='fullscreen' dimmer='blurring'>
+                                                <ViewOrder
+                                                    submission={this.props.view}
+                                                    apiKey={this.state.apiKey}
+                                                    viewPropID={this.props.view.map(el => el.id)}
+                                                    viewPropAnswer={this.props.view.map(el => el.answers)}
+                                                />                                            
+                                            </Modal>
+                                            </div>
+                                        }
+                                    </div>
+                                </li>
+                            )} 
+                        </ul>
+                    </Grid.Column> 
+                </Grid> : null } 
+            </div>
+        )
+        
     }
 }
 
 const mapStateToProps = (state,ownProps) => {
-    console.log("ownProps.form: ",ownProps.match.path)
-    console.log(state)
     return {
         form: ownProps.match.path === '/' ? state.forms  : null  ||
                 ownProps.match.path === '/order' ? state.ordered : null ||
-                ownProps.match.path === '/normal' ? state.normal : null
+                ownProps.match.path === '/normal' ? state.normal : null,
+        offset : state.offset,
+        view : state.view
     }
 }
 
 export default connect(
     mapStateToProps,
-    { getForm,orderComplete,orderDetails, 
-    changeTitle}
+    { getForm,orderComplete, 
+    changeTitle,swap,offset,submission}
 )(Home);
 
 

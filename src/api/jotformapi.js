@@ -1,5 +1,5 @@
 import axios from 'axios';
 
 export default axios.create({
-    baseURL: 'http://api.jotform.com'
+    baseURL: 'https://api.jotform.com'
 })
