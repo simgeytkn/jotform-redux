@@ -9,7 +9,7 @@ img{
 }
 
 .search {
-    margin-top: 1em;
+    margin: 1em 8em !important;
 }
 
 .search .ui.input{
@@ -58,20 +58,8 @@ img{
     margin-left: 15px;
 }
 
-.ui.text.vertical.leftMenu.menu{
-    width: 100%;
-    margin-top: 5em;
-}
-
-.leftMenu .links{
-    text-align: center;
-    color: #f5c846;
-    font-size: 25px;
-    display: block;
-}
-
-.leftMenu .links span{
-    margin-right: 15px;
+.ui.grid.context{
+    border-radius: 20px;
 }
 
 .context{
@@ -81,6 +69,32 @@ img{
 .podo{
     height: 200px;
 }
+
+.three.wide.column.left{
+    border-right: 1px solid #b59a69
+}
+
+.stretched.thirteen.wide.column.content{
+    padding-left: 3em;
+}
+
+#leftMenu{
+    border-right: none;
+    padding: 3em;
+}
+
+a.links{
+    font-size: 27px;
+    font-weight: bold;
+}
+
+a:focus{
+    color: orange;
+}
+a:focus-visible{
+    color: orange;
+}
+
 
 .ui.table tr td{
     border-top: none;
