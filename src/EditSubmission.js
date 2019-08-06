@@ -8,13 +8,13 @@ class EditSubmission extends Component {
     constructor(props){
         super(props)
         this.state = {
-            edit_text: Object.values(this.props.submissionDetails.answers).map(el => el.name==='orderTextarea' ? el.answer : null).filter(el => el!==null)
+            edit_text: Object.values(this.props.submissionDetails.answers).map(el => el.name==='orderDetails' ? el.answer : null).filter(el => el!==null)[0]
         }
         console.log(this.props.submissionDetails.answers)
     }
 
     componentWillUnmount(){
-        console.log("kapandı")
+        console.log("API: ",this.props.apiKey,"SubmissionID: ",this.props.submissionID)
         this.props.getNewSubmission(this.props.apiKey, this.props.submissionID);
         this.props.submission(this.props.submissionDetails.form_id,this.props.apiKey);
     }
@@ -27,24 +27,29 @@ class EditSubmission extends Component {
 
     edit = () => {
         const submissionAnswers = Object.values(this.props.submissionDetails.answers)
+
+       
         
         /* For Text */
-        const getKeyText = submissionAnswers.map((el,index) => el.name==='orderTextarea' ? index+1 : null);
+        const getKeyText = submissionAnswers.map((el,index) => el.name==='orderDetails' ? Object.keys(this.props.submissionDetails.answers)[index] : null);
         const keyText = getKeyText.filter(el => el !== null)
 
         /* For Radio */
-        const getKeyRadio = submissionAnswers.map((el,index) => el.name==='app_order_complited' ? index+1 : null);
+        const getKeyRadio = submissionAnswers.map((el,index) => el.name==='app_order_complited' ? Object.keys(this.props.submissionDetails.answers)[index] : null);
         const keyRadio = getKeyRadio.filter(el => el !== null)
+
+        console.log("Key: ", keyText)
 
         if(this.refs.check_me.state.checked===false){
             this.props.editAnswers(this.props.apiKey, this.props.submissionID,this.state.edit_text, keyText, keyRadio, " ");
         }
 
-        else this.props.editAnswers(this.props.apiKey, this.props.submissionID,this.state.edit_text, keyText,keyRadio, "Completed");
-        alert("Changed")
+        else this.props.editAnswers(this.props.apiKey, this.props.submissionID,this.state.edit_text, keyText,keyRadio, "Completed");  
+        alert("Changed") 
     }
 
     render(){
+        console.log("Edit Texr: ",this.state.edit_text)
         return(
             <div>
                 <Grid className="modalEdit">
@@ -55,7 +60,7 @@ class EditSubmission extends Component {
                             {
                                 Object.values(this.props.submissionDetails.answers).map((el) => el.name === 'app_order_complited' ?
                                 <div className="editTexts">
-                                    {el.answer==='Completed' ? <Checkbox ref="check_me" label='Completed' defaultChecked /> : <Checkbox ref="check_me"  label='Completed' /> }
+                                    {el.answer===" " ? <Checkbox ref="check_me" label='Completed'/> : <Checkbox ref="check_me"  label='Completed' defaultChecked /> }
                                 </div> : null
                             )}
                             <TextArea className="p15" value={this.state.edit_text} onChange={this.textareaChange} />
