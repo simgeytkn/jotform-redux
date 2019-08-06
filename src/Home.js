@@ -11,17 +11,21 @@ import Script from "react-load-script";
 class Home extends Component {
     constructor(props){
         super(props);
-        this.getForms = this.getForms.bind(this)
+        console.log("Props: ",props)
+        this.error = false
         this.state={
-            apiKey: '',
+            apiKey: window.JF.getAPIKey(),
             open: false,
-            counter: 0
+            counter: 0,
+            activeItem: 'all'
         }
         this.convertOrder = this.convertOrder.bind(this)
     }
 
     handleConfirm = () => this.setState({ open: false })
     handleCancel = () => this.setState({ open: false })
+
+    handleItemClick = (e, { name }) => this.setState({ activeItem: name })
 
     componentWillUnmount() {
         window.removeEventListener('scroll', this.debounce)
@@ -60,87 +64,75 @@ class Home extends Component {
         
     }
 
-    getForms = () => {
+    componentDidMount(){
         this.props.getForm(this.state.apiKey,this.props.offset)
     }
 
     scroll = (e) => {
         var element = e.target
         if(element.scrollHeight - element.scrollTop === element.clientHeight){
-            this.getForms()
+            this.props.getForm(this.state.apiKey,this.props.offset)
         }
         
     }
 
     render(){
+        const { activeItem } = this.state.activeItem
         return( 
-            <div className="search">
-                <Script url="https://js.jotform.com/JotForm.js" />
-                {this.props.form.length ? null  : 
-                <Grid centered>
-                    <Grid.Column width={4}>
-                        <Input icon={{ name: 'search', circular: true, link: true }} placeholder='Enter API Key' id="apiKey" onBlur={this.inputKey} defaultValue="2408efdd6d5f8512c44907b94c5626a6"/>
-                    </Grid.Column>
-                    <Grid.Column width={2}>
-                    <Link to='/'> 
-                            <button className="enterButton" onClick={this.getForms}>
-                                Enter
-                            </button>
-                        </Link> 
-                    </Grid.Column>
-                </Grid>}
+            <div className="search">              
                 {this.props.form.length ?
                 <Grid className="context">
-                    <Grid.Column id="borderRight" width={4} >
-                        <Image className="podo" src="https://cdn.jotfor.ms/assets/img/memberkit/user_guide_images/f1.png?v=0.2" circular/>
-                        <Menu text vertical className="leftMenu">
-                            <Menu.Item>
-                                <Link to="order" onClick={this.getForms} className="links">
-                                    <span>ORDERED</span>
-                                    <Icon name='chevron right' />
-                                </Link>
-                            </Menu.Item>
-                            <Menu.Item>
-                                <Link to="normal" onClick={this.getForms} className="links">
-                                    <span>NORMAL</span>
-                                    <Icon name='chevron right' />
-                                </Link>
-                            </Menu.Item>
-                            <Menu.Item>
-                                <Link to="/" onClick={this.getForms} className="links">
-                                    <span>ALL</span>
-                                    <Icon name='chevron right' />
-                                </Link>
-                            </Menu.Item>
-                        </Menu>
-                    </Grid.Column>
-                    <Grid.Column width={10}> 
-                        <ul onScroll={this.scroll}>   
-                            {this.props.form.map((el,index) => 
-                                <li key={index} id={el.id}>
-                                    {el.title}
-                                    <div className="buttons">
-                                        {el.title.indexOf('Order') === -1 ? 
-                                            <Button title={el.title} id={el.id} onClick={() => this.convertOrder(el)}>
-                                                Convert To Order Form  
-                                            </Button>
-                                            : <div>
-                                            <Modal trigger={<Button className='mr40' onClick={() => this.viewOrder(el)}>View Order</Button>} size='fullscreen' dimmer='blurring'>
-                                                <ViewOrder
-                                                    submission={this.props.view}
-                                                    apiKey={this.state.apiKey}
-                                                    viewPropID={this.props.view.map(el => el.id)}
-                                                    viewPropAnswer={this.props.view.map(el => el.answers)}
-                                                />                                            
-                                            </Modal>
-                                            </div>
-                                        }
-                                    </div>
-                                </li>
-                            )} 
-                        </ul>
-                    </Grid.Column> 
-                </Grid> : null } 
+                <Grid.Column className="left" width={3}>
+                    <Image className="podo" src="https://cdn.jotfor.ms/assets/img/memberkit/user_guide_images/f1.png?v=0.2" circular/>
+                    <Menu id="leftMenu"  fluid vertical tabular>
+                        <Menu.Item name='order'>
+                            <Link to="order" onClick={this.getForm} className="links">
+                                <span>ORDERED</span>
+                            </Link>
+                        </Menu.Item>
+
+                        <Menu.Item name='normal'>
+                            <Link to="normal" onClick={this.getForm} className="links">
+                                <span>NORMAL</span>
+                            </Link>
+                        </Menu.Item>
+
+                        <Menu.Item
+                        name='all'>
+                            <Link to="/" onClick={this.getForm} className="links">
+                                <span>ALL</span>
+                            </Link>
+                        </Menu.Item>
+                  </Menu>
+                </Grid.Column>
+        
+                <Grid.Column className="content" stretched width={13}>
+                <ul onScroll={this.scroll}>   
+                    {this.props.form.map((el,index) => 
+                    <li key={index} id={el.id}>
+                        {el.title}
+                        <div className="buttons">
+                            {el.title.indexOf('Order') === -1 ? 
+                                <Button title={el.title} id={el.id} onClick={() => this.convertOrder(el)}>
+                                    Convert To Order Form  
+                                </Button>
+                                : <div>
+                                <Modal trigger={<Button className='mr40' onClick={() => this.viewOrder(el)}>View Order</Button>} size='fullscreen' dimmer='blurring'>
+                                    <ViewOrder
+                                        submission={this.props.view}
+                                        apiKey={this.state.apiKey}
+                                        viewPropID={this.props.view.map(el => el.id)}
+                                        viewPropAnswer={this.props.view.map(el => el.answers)}
+                                    />                                            
+                                </Modal>
+                                </div>
+                            }
+                        </div>
+                    </li>
+                    )} 
+                </ul>
+                </Grid.Column>
+              </Grid> : null } 
             </div>
         )
         
